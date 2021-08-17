@@ -37,7 +37,7 @@ placeholder = st.empty()
 start_button = st.empty()
 
 def scatter_chart():
-    token = os.getenv('GITHUB_TOKEN', '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')
+    token = os.getenv('GITHUB_TOKEN', '<your access key>')
     g = Github(token)
     repo = g.get_repo("yaqootali/Data_add")
     name_path = repo.get_contents("")[-1].path
@@ -73,7 +73,7 @@ def scatter_chart():
 placeholder_2 = st.empty()    
 
 def get_average():
-    token = os.getenv('GITHUB_TOKEN', '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')
+    token = os.getenv('GITHUB_TOKEN', '<your access key>')
     g = Github(token)
     repo = g.get_repo("yaqootali/Data_add")
     name_path = repo.get_contents("")[-1].path
