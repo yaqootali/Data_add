@@ -1,0 +1,54 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Aug 14 17:59:53 2021
+
+@author: Yaqoot
+"""
+
+import numpy as np 
+import datetime as datetime
+import pandas as pd
+import time 
+
+
+
+def final_data():
+            
+    def get_data():
+        temperature = np.random.choice(range(10,40),1)
+        humidity = np.random.choice(range(50,100),1)
+        time = datetime.datetime.now()
+        data = pd.DataFrame({'Time':time,'Temperature':temperature,
+                                     'Humidity':humidity})
+        return(data)
+            
+            
+    from github import InputGitAuthor
+    from github import Github
+    import os
+    import io
+    
+    token = os.getenv('GITHUB_TOKEN', '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')
+    g = Github(token)
+    new_repo = g.get_repo("yaqootali/Data_add")
+    name_1 = str(datetime.datetime.now())
+    new_repo.create_file("{}.csv".format(name_1), "init commit", 'Time,Humidity,Temperature')
+    
+    
+    while True:    
+        repo = g.get_repo("yaqootali/Data_add")
+        file_path = "{}.csv".format(name_1)
+        file = repo.get_contents(file_path, ref="main")
+        data = file.decoded_content.decode("utf-8")
+        database = pd.read_csv(io.StringIO(data))
+        d_new = database.append(get_data())
+        df2 = d_new.to_csv(sep=',', index=False)
+        author = InputGitAuthor("yaqootali","yaqootali@gmail.com")
+        source = repo.get_branch("main")
+        contents = repo.get_contents(file_path, ref='main')
+        repo.update_file(contents.path, 'Update', df2, contents.sha, "main", author=author)  # Add, commit and push branch    
+        time.sleep(5)
+
+
+if __name__ ==  '__main__':
+    final_data()
