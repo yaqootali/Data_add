@@ -1,0 +1,103 @@
+import streamlit as st
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns 
+import sklearn as sk
+import pydeck as pdk 
+import altair as alt 
+from datetime import datetime
+import pandas as pd
+import plotly.graph_objects as go
+from plotly import tools
+import plotly.offline as py
+import plotly.express as px
+import streamlit.components.v1 as components
+import streamlit as st
+import streamlit as st
+import time
+import random
+import plotly.express as px
+import pandas as pd
+from github import InputGitAuthor
+from github import Github
+import os
+import io
+
+st.markdown("Humidity and Temperature Measurement")
+
+
+st.sidebar.header("Select Date")
+date = st.sidebar.date_input('start date')
+
+
+
+
+placeholder_0 = st.empty()
+placeholder = st.empty()
+start_button = st.empty()
+
+def scatter_chart():
+    token = os.getenv('GITHUB_TOKEN', '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')
+    g = Github(token)
+    repo = g.get_repo("yaqootali/Data_add")
+    name_path = repo.get_contents("")[-1].path
+    repo = g.get_repo("yaqootali/Data_add")
+    file_path = "{}".format(name_path)
+    file = repo.get_contents(file_path, ref="main")
+    data = file.decoded_content.decode("utf-8")
+    df = pd.read_csv(io.StringIO(data))   
+    df.to_csv('C:\\Users\\Yaqoot\\Desktop\\sensor.csv',index = False)
+    df = pd.read_csv('C:\\Users\\Yaqoot\\Desktop\\sensor.csv')
+    x = df['Time']
+    y = df['Humidity']
+    z = df['Temperature']
+    col1, col2 = st.beta_columns((1, 1))
+    with col1:
+        
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=x, y=y,
+                    mode='lines+markers',
+                    name='Humidity'))
+        placeholder_0.write(fig)
+    
+    with col2:
+        fig_2 = go.Figure()
+        fig_2.add_trace(go.Scatter(x=x, y=z,
+                    mode='lines+markers',
+                    name='Temperature'))
+    
+        placeholder.write(fig_2)
+
+        
+        
+placeholder_2 = st.empty()    
+
+def get_average():
+    token = os.getenv('GITHUB_TOKEN', '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')
+    g = Github(token)
+    repo = g.get_repo("yaqootali/Data_add")
+    name_path = repo.get_contents("")[-1].path
+    repo = g.get_repo("yaqootali/Data_add")
+    file_path = "{}".format(name_path)
+    file = repo.get_contents(file_path, ref="main")
+    data = file.decoded_content.decode("utf-8")
+    df = pd.read_csv(io.StringIO(data))   
+    df.to_csv('C:\\Users\\Yaqoot\\Desktop\\sensor_av.csv',index = False)
+    df = pd.read_csv('C:\\Users\\Yaqoot\\Desktop\\sensor_av.csv')
+    y = df['Humidity']
+    z = df['Temperature']
+    y_mean = np.nanmean(y)
+    z_mean = np.nanmean(z)
+    finals = pd.DataFrame({'Average Humidity':np.round(y_mean,2),'Average Temperature':np.round(z_mean,2)},index = [0])
+    placeholder_2.write(finals)
+    
+    
+if start_button.button('Start',key='start'):
+    start_button.empty()
+    if st.button('Stop',key='stop'):
+        pass
+    while True:
+        scatter_chart()
+        get_average()
+        time.sleep(0.5)    
+    
